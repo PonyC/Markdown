@@ -6,6 +6,8 @@ github.com 替换为国内镜像地址`github.com.cnpmjs.org`
 ### 修改远程地址
 ```shell
 git remote set-url origin https://hub.fastgit.org/xxxx/xxxx.git
+or
+git remote set-url  origin https://github.com.cnpmjs.org/xxxx
 ```
 
 ### 配置代理
