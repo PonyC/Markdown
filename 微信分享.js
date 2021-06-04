@@ -67,3 +67,17 @@ export function initShare (params) {
     })
   })
 }
+
+// 使用
+try {
+  await initToken(
+    {
+      title: 'title',
+      desc: 'xxxx',
+      img:'', // 必须是绝对路径
+      link: ''
+    }
+  )
+} catch (e) {
+  console.error(e)
+}
