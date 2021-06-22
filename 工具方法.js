@@ -130,6 +130,7 @@ export function formatTime(time, format) {
   });
   return time_str;
 }
+
 // 时间差
 export function formTheCurrentTime(time) {
   // 处理传入时间，兼容iOS
@@ -154,7 +155,7 @@ export function formTheCurrentTime(time) {
   return diffObj.d;
 }
 
-// 设置title
+// 设置微信title
 export function setTitle(title) {
   document.title = title;
   // 针对微信中的处理
@@ -170,10 +171,14 @@ export function setTitle(title) {
   document.body.appendChild(iframe);
 }
 
-//获取制定时间的日期
-export function getDate(num) {
+/**
+ * 获取指定天数的日期
+ * @param {*} diff 正数为后x天 负数为前x天
+ * @returns 
+ */
+export function getDate(diff) {
   const now = new Date();
-  const date = new Date(now.getTime() - num * 24 * 3600 * 1000);
+  const date = new Date(now.getTime() - diff * 24 * 3600 * 1000);
   const year = date.getFullYear();
   const month =
     date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1);
@@ -255,4 +260,44 @@ export function darwRoundRect({x, y, w, h, r,color,shadow,url, ctx} = {}) {
     ctx.fill();
   }
   ctx.restore();
+}
+
+// 节流函数
+export function throttle(func, ms){
+  let isCool = false,
+  _self,
+  _args;
+  function w(...args) {
+    console.log(args)
+    // 如果冻结状态，直接返回，并记录下来传递的参数
+    if (isCool) {
+        _self = this
+        _args = args
+        return
+    } 
+    // 非冻结状态
+    func.apply(this, args) // 执行
+    isCool = true // 执行后冻结
+    setTimeout(() => {
+        isCool = false // 时间到了之后解冻
+        if (_args && _args.length) { // ms时间过后，如果在冻结期有触发操作，则执行一次
+            w.apply(_self, _args)
+            _self = null
+            _args = null // 执行后把冻结期参数置空，避免ms之后对之前的操作进行下一轮执行
+        } 
+    }, ms)
+  }
+  return w
+}
+
+//防抖函数
+const debounce = (func, ms) =>{
+  let isCool = false // 是否为冻结状态
+  return function(...args) {
+      if (isCool) return // 冻结状态直接跳出不继续执行
+      // 非冻结状态
+      func.apply(this, args) // 执行
+      isCool = false // 执行后把状态置为冻结状态
+      setTimeOut(() => {isCool = true}, ms) // 过ms时间后再把状态置为解冻
+  }
 }
