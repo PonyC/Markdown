@@ -291,7 +291,7 @@ export function throttle(func, ms){
 }
 
 //防抖函数
-const debounce = (func, ms) =>{
+export const debounce = (func, ms) =>{
   let isCool = false // 是否为冻结状态
   return function(...args) {
       if (isCool) return // 冻结状态直接跳出不继续执行
@@ -301,3 +301,60 @@ const debounce = (func, ms) =>{
       setTimeOut(() => {isCool = true}, ms) // 过ms时间后再把状态置为解冻
   }
 }
+
+// 下载 blob 文件流
+export const downloadFileFromBlob = ({ data, fileName } = {}) => {
+  const blob = new Blob([data]);
+  const downloadElement = document.createElement("a");
+  const href = window.URL.createObjectURL(blob);
+  const name = fileName;
+  downloadElement.href = href;
+  downloadElement.download = name;
+  document.body.appendChild(downloadElement);
+  downloadElement.click();
+  document.body.removeChild(downloadElement);
+  window.URL.revokeObjectURL(href);
+};
+
+// 下载
+export const downloadFile = ({ fileName, url } = {}) => {
+  window.open(`${url}?attname=${fileName}`, "_bank");
+};
+
+/**
+ * 比较函数 用于sort排序
+ * @param {*} keyName  - 需要排序的字段名称
+ */
+ export const compare = (keyName, order) => {
+  let sort = (m, n) => {
+    const a = m[keyName];
+    const b = n[keyName];
+    if (order === "ascend") {
+      return b - a; //降序
+    } else {
+      return a - b; // 升序
+    }
+  };
+  //这是比较函数
+  return sort;
+};
+
+/**
+ * 缓存装饰器
+ * @param {*} func
+ */
+ export const cachingDecorator = func => {
+  let cache = new Map();
+
+  return function(x) {
+    if (cache.has(x)) {
+      // 如果缓存中有对应的结果
+      return cache.get(x); // 从缓存中读取结果
+    }
+
+    let result = func(x); // 否则就调用 func
+
+    cache.set(x, result); // 然后将结果缓存（记住）下来
+    return result;
+  };
+};
